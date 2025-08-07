@@ -52,11 +52,14 @@ console.log("SUPABASE:", process.env.SUPABASE_ANON_KEY);
       body: JSON.stringify({ refresh_token, email }),
     });
 console.log("termino consumo de api");
-    const contentType = response.headers.get("content-type") || "application/json";
-    const data =
-      contentType.includes("application/json")
-        ? await response.json()
-        : await response.text();
+    const contentType = response.headers.get("content-type") || "";
+    let data;
+
+    if (contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      data = await response.text(); // fallback para errores HTML o text/plain
+    }
 
     return new NextResponse(
       typeof data === "string" ? data : JSON.stringify(data),
@@ -64,18 +67,20 @@ console.log("termino consumo de api");
         status: response.status,
         headers: {
           ...corsHeaders,
-          "Content-Type": contentType,
+          "Content-Type": contentType.includes("application/json")
+            ? "application/json"
+            : "text/plain",
         },
-      },
+      }
     );
   } catch (error) {
-    console.error("❌ Error en proxy:", error);
+    console.error("❌ Error en proxy reset-pwd:", error);
     return new NextResponse(
       JSON.stringify({ error: "Internal server error", detail: `${error}` }),
       {
         status: 500,
         headers: corsHeaders,
-      },
+      }
     );
   }
 }
