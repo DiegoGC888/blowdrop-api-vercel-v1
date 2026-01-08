@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const { email, newPassword, token } = await req.json();
 console.log("SUPABASE:", process.env.SUPABASE_ANON_KEY);
 
-    const response = await fetch("https://cjsxbayumsbpvezswsfs.supabase.co/functions/v1/reset-pwd", {
+    const response = await fetch("https://kjaubxdhydpavobfbbkk.supabase.co/functions/v1/reset-pwd", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
