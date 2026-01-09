@@ -16,7 +16,7 @@ export async function OPTIONS() {
     headers: corsHeaders,
   });
 }
-
+ 
 export async function POST(req: NextRequest) {
     console.log("Entro 1");
 
