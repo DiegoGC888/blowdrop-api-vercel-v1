@@ -21,19 +21,23 @@ export async function POST(req: NextRequest) {
     console.log("Entro 1");
 
   try {
-    const { email, newPassword, token } = await req.json();
-console.log("SUPABASE:", process.env.SUPABASE_ANON_KEY);
+    const { email, newPassword, access_token, refresh_token } = await req.json();
+    const supabaseKey = (process.env.SUPABASE_ANON_KEY ?? "").trim();
+    console.log("SUPABASE:", supabaseKey); 
+    console.log("email:", email);
+    console.log("access_token:", access_token);
+    console.log("refresh_token:", refresh_token);
 
     const response = await fetch("https://kjaubxdhydpavobfbbkk.supabase.co/functions/v1/reset-pwd", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         // Solo el backend conoce esta key, segura
-        Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+        Authorization: `Bearer ${supabaseKey}`,
       },
-      body: JSON.stringify({ email, newPassword, token }),
+      body: JSON.stringify({ email, newPassword, access_token, refresh_token }),
     });
-console.log("termino consumo de api");
+    console.log("termino consumo de api");
     const data = await response.json();
     return new NextResponse(JSON.stringify(data), {
       status: response.status,

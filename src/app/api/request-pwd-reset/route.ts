@@ -22,14 +22,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const { email } = await req.json();
-console.log("SUPABASE:", process.env.SUPABASE_ANON_KEY);
+    const supabaseKey = (process.env.SUPABASE_ANON_KEY ?? "").trim();
+    console.log("SUPABASE:", supabaseKey);
+    console.log("email:", email);
 
     const response = await fetch("https://kjaubxdhydpavobfbbkk.supabase.co/functions/v1/request-pwd-reset", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         // Solo el backend conoce esta key, segura
-        Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+        Authorization: `Bearer ${supabaseKey}`,
       },
       body: JSON.stringify({ email }),
     });
