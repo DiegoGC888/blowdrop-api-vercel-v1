@@ -1,6 +1,6 @@
 // app/api/reset-pwd/route.ts
 export const runtime = 'edge';
-
+ 
 import { NextRequest, NextResponse } from "next/server";
 
 const corsHeaders = {
@@ -29,6 +29,11 @@ export async function POST(req: NextRequest) {
       "unknown";
 
     const { refresh_token, email } = await req.json();  
+    const supabaseKey = (process.env.SUPABASE_ANON_KEY ?? "").trim();
+    console.log("SUPABASE:", supabaseKey);
+    console.log("refresh_token:", refresh_token);
+    console.log("email:", email);
+
     if (!refresh_token || !email) {
       return new NextResponse(
         JSON.stringify({ error: "refresh_token and email are required" }),
@@ -39,19 +44,18 @@ export async function POST(req: NextRequest) {
       );
     }
     
-console.log("SUPABASE:", process.env.SUPABASE_ANON_KEY);
-
     const response = await fetch("https://kjaubxdhydpavobfbbkk.supabase.co/functions/v1/get-messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         // Solo el backend conoce esta key, segura
-        Authorization: `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+        Authorization: `Bearer ${supabaseKey}`,
+        "apikey": `${supabaseKey}`,
         "x-forwarded-for": ip,
       },
       body: JSON.stringify({ refresh_token, email }),
     });
-console.log("termino consumo de api");
+    console.log("termino consumo de api");
     const contentType = response.headers.get("content-type") || "";
     let data;
 
